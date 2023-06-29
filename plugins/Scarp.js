@@ -1,6 +1,6 @@
 const axios = require('axios')
 const cheerio = require('cheerio')
-
+const ytdl = require('ytdl-core-discord');
 
 function pinterest(querry) {
   return new Promise(async (resolve, reject) => {
@@ -165,5 +165,70 @@ function styletext(teks) {
       })
   })
 }
+function secondsToMinutes(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes} minutes ${remainingSeconds} seconds`;
+}
 
-module.exports = { pinterest, wallpaper, wikimedia,quotesAnime, aiovideodl, umma, ringtone, styletext }
+async function getVideoYT(url) {
+  return new Promise(async (resolve, reject) => {
+  try{  
+    const videoInfo = await ytdl.getInfo(url);
+
+    // Get available video formats
+    const formats = videoInfo.formats;
+
+    let highQualityURL = '';
+    let mediumQualityURL = '';
+    let lowQualityURL = '';
+
+    formats.forEach(format => {
+      if (
+        format.hasVideo &&
+        format.hasAudio &&
+        format.qualityLabel !== 'tiny'
+      ) {
+        if (!highQualityURL && format.contentLength < 100 * 1024 * 1024) {
+          highQualityURL = format.url;
+        }
+        if (!mediumQualityURL && format.contentLength < 50 * 1024 * 1024) {
+          mediumQualityURL = format.url;
+        }
+        if (!lowQualityURL) {
+          lowQualityURL = format.url;
+        }
+      }
+    });
+     let video_url = "";
+    if (highQualityURL) {
+      video_url = highQualityURL ;
+    } else if (mediumQualityURL) {
+      video_url = mediumQualityURL;
+    } else if (lowQualityURL) {
+      video_url = lowQualityURL;
+    } else {
+      video_url ='No video with the specified criteria found.';
+    }
+
+    // Get additional video details
+    
+    const author = videoInfo.videoDetails.author.name;
+    const duration = secondsToMinutes(videoInfo.videoDetails.lengthSeconds);
+    const thumbnail = videoInfo.videoDetails.thumbnails[0].url;
+    const title = videoInfo.videoDetails.title;
+    const description = videoInfo.videoDetails.description;
+    const data = [author,duration,thumbnail,title,description,video_url]
+    resolve(data)
+    } catch(error) {
+    resolve([])
+  //  console.log(error)  
+  }
+   // return 'Error fetching video information:'
+   
+      // Handle error
+      
+  });
+  
+}
+module.exports = { pinterest, wallpaper, wikimedia,quotesAnime, aiovideodl, umma, ringtone, styletext,getVideoYT }

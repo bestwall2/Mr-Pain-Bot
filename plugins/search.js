@@ -2,12 +2,14 @@ const yts = require("youtube-yts");
 const googleit = require("google-it");
 const axios = require("axios");
 const { Sticker, StickerTypes } = require("wa-sticker-formatter");
-const {pinterest,wallpaper,wikimedia,styletext,ringtone,umma,aiovideodl,quotesAnime} = require("./Scarp.js")
+const {pinterest,styletext,getVideoYT} = require("./Scarp.js")
 //const hxzapi = require("hxzapi");
+const gplay = require('google-play-scraper');
+
 const tenorApiKey = "AIzaSyCyouca1_KKy4W_MG1xsPzuku5oa8W358c"
 
 exports.ytsearsh = async (text) => {
-let search = await yts(text);
+let search = await yts(text.replace(" ","+"));
 let thumbnail2 = search.all[0].thumbnail;
 let num = 1;
 
@@ -70,4 +72,36 @@ imgnyee = res[Math.floor(Math.random() * res.length)];
 let txt = `\n 🎀 Pinterest Search 🎀 \n\n *Term*:✨${text.replace("+","")}✨\n\n *Powered by*:🍁MrPain🍁\n`; 
 return [txt,imgnyee]     
 }
+exports.txtstyle = async (text) => {
+const txt = await styletext(text.replace("+"," "));
+let msg = `\n      *『 ✨ Text Style ✨ 』*\n\n `
+for (sty of txt ){
+    msg += `🍁 *${sty.name}* : ${sty.result} \n`  
+}
+    return msg;
+    }
+exports.getYt = async (text) => {
+let txt = "";
+const v = await getVideoYT(text.trim());
+txt+= `╭───────────────◆
+│  *Youtube Player* ✨
+│⿻ *Title:* ${v[3]}
+│⿻ *Duration:* ${v[1]}
+│⿻ *Descri* ${v[4]}
+│⿻ *Author:* ${v[0]}
+╰────────────────◆` ;                                                                     
+//console.log(txt,v[5])
+return [txt , v[5]];
+
+}
+exports.apksh = async (text) =>{
+    let txt1 = `\n   🪄🍁 *Apk Search* 🪄🍁\n`
+    const result = await gplay.search({term: text,num: 20});
+      temp = result[0].icon;
+    for (item of result){
+      urldl = `https://apkcombo.com/${item.title.trim().replace(/\s/g,"").replace("  ","").split(":")[0].split("–")[0].trim()}/${item.appId}/download/apk`
+      txt1+=`\n◆────────────────◆\n📚 *Name* :${item.title.split(":")[0]}\n🧰 *ScoreText* : ${item.scoreText}\n👨🏻‍💻 *Developer* :${item.developer}\n📲 *UrlDl* :${urldl}\n📁 *Package name* :${item.appId}\n◆────────────────◆\n`
+    }
     
+   return [txt1,temp];
+}
