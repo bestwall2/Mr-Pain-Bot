@@ -1,0 +1,1 @@
+{"key":{"remoteJid":"status@broadcast","fromMe":false,"id":"6F387248AE020830761C2FF911A88B40","participant":"212626367094@s.whatsapp.net"},"messageTimestamp":1687972829,"pushName":"Atika","broadcast":true,"messageStubType":2,"messageStubParameters":["No sender key for: status@broadcast::212626367094::0"]}

@@ -1,9 +1,9 @@
 const { tools } = require("./lib/tools");
 const { MessageType, MessageOptions, Mimetype } = require('@whiskeysockets/baileys');
-const { BOT_EMOJI, logo, PREFIX } = require("./config");
-const { ytsearch, google, getSticker, lyrics, pinterest } = require('./plugins/search');
+const { BOT_EMOJI, logo, PREFIX,STYLE} = require("./config");
+const { ytsearsh,getYt, google, getSticker, lyrics, pinterest,txtstyle,apksh} = require('./plugins/search');
 
-async function checker({ bot, msg }, CMD, TEXT, textMessage) {
+async function checker({ bot, msg }, CMD, TEXT) {
   const q = tools({ bot, msg });
   switch (CMD) {
     case `${PREFIX}menu`:
@@ -16,7 +16,7 @@ async function checker({ bot, msg }, CMD, TEXT, textMessage) {
         return await q.sendReply("*أكتب الأمر بهذه الطريقة /yts Mr Pain Bot*");
       }
       await q.sendReact("🔍");
-      const res1 = await ytsearch(TEXT);
+      const res1 = await ytsearsh(TEXT);
       await q.IMG_CAPTAIN(res1[0], res1[1]);
       break;
     case `${PREFIX}lyrics`:
@@ -61,14 +61,43 @@ async function checker({ bot, msg }, CMD, TEXT, textMessage) {
       await q.sendErrorReply("sσмє τнiиɢ ωαяиiиɢ !")
     }
       break;
-      case `${PREFIX}vid`:
+      case `${PREFIX}textstyle`:
+      case `${PREFIX}tstyle`:
       if(!TEXT){
         await q.sendReact("❌");
-        return await q.sendReply("*أكتب الأمر بهاذه الطريقة /getStk Mr Pain Bot*")
+        return await q.sendReply("*أكتب الأمر بهاذه الطريقة /textstyle Mr Pain*")
       }
-      await q.sendReact("🐸");
-      const vid = "https://cima9.upbaam.com/8fhfc2oss8jo/Maid.For.Revenge.2023.480p.WEB-DL.weciima.autos.mp4.html?Key=QCwAXT4dwoArJD1IsU5kBA&Expires=1687711949"
-      await q.sendFileUrl(vid,'video/mp4',"film-tezt-send.mp4")
+      await q.sendReact("🪄");
+      const style = await txtstyle(TEXT);
+      await q.IMG_CAPTAIN_FILE(style,STYLE);
+      break;
+      case `${PREFIX}ytdl`:      
+      if(!TEXT.includes("https://youtu")){
+        await q.sendReact("❌");
+        return await q.sendReply("*أكتب الأمر بهاذه الطريقة /ytdl <url> *")
+      }
+     try {
+      await q.sendReact("🔍");
+      console.log(TEXT);
+      const v = await getYt(TEXT);
+      await q.sendVideo(v[0],v[1],false);                  
+       } catch (error) {
+      await q.sendErrorReply("sσмє τнiиɢ ωαяиiиɢ !");
+     }
+      break;
+      case `${PREFIX}apksh`:      
+      if(!TEXT){
+        await q.sendReact("❌");
+        return await q.sendReply("*أكتب الأمر بهاذه الطريقة /apksh Mr Pain*")
+      }
+     try {
+      await q.sendReact("📤");
+      //console.log(TEXT);
+      const apks = await apksh(TEXT);
+      await q.IMG_CAPTAIN(apks[0],apks[1]);                  
+       } catch (error) {
+      await q.sendErrorReply("sσмє τнiиɢ ωαяиiиɢ !");
+     }
       break;
     default:
       // Handle unrecognized commands
